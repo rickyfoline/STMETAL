@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STMetal | Soluções industriais e metalomecânica (3D)</title>
+<meta name="description" content="STMetal: fabricação, soldadura, montagem e manutenção industrial. Tubagem, caldeiraria e estruturas metálicas em Portugal, Espanha e Itália. Peça um orçamento.">
+<meta name="theme-color" content="#0a1640">
+<meta property="og:title" content="STMetal | Soluções metalomecânicas para projetos industriais exigentes">
+<meta property="og:description" content="Fabricação, soldadura, montagem e manutenção industrial. Portugal, Espanha e Itália.">
+<!-- Ao publicar, troque por o endereço completo, ex.: https://seudominio.pt/assets/st-28.jpg -->
+<meta property="og:image" content="assets/st-28.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="assets/gear.png">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Big+Shoulders+Display:wght@600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Direção: oficina e obra. Azul-marinho da marca, azul royal e azul-arco como único acento.
+   Big Shoulders Display (condensada, de letreiro industrial) nos títulos; Archivo no texto; JetBrains Mono só para normas e materiais.
+   Forma: tudo reto, sem cantos arredondados. Um só tema, escuro, o da marca. A soldadura é o fio condutor. */
+:root{
+  --navy:#0a1640; --navy0:#070f2d; --navy2:#0e1c52; --navy3:#142a73;
+  --blue:#2a46e8; --blue-h:#4962f3; --arc:#6b8bff; --arc-l:#b3c3ff; --steel:#c0c3c8;
+  --ink:#f1f4ff; --muted:#a9b3d6; --line:rgba(179,195,255,.16); --line2:rgba(179,195,255,.36);
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --ease:cubic-bezier(.23,1,.32,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:80px;scrollbar-width:thin;scrollbar-color:#2a46e8 #070f2d}
+::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:#070f2d}::-webkit-scrollbar-thumb{background:linear-gradient(#2a46e8,#4962f3);border-left:1px solid #070f2d}
+body{font-family:var(--sans);font-weight:400;font-size:1.0625rem;line-height:1.62;color:var(--ink);background:var(--navy);overflow-x:hidden;-webkit-font-smoothing:antialiased;accent-color:var(--arc);caret-color:var(--arc)}
+img{max-width:100%;display:block;-webkit-user-drag:none}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+::selection{background:var(--arc);color:var(--navy0)}
+:focus-visible{outline:2px solid var(--arc-l);outline-offset:3px}
+.skip{position:absolute;left:12px;top:-60px;background:var(--blue);color:#fff;padding:12px 18px;z-index:100;transition:top .2s}
+.skip:focus{top:12px}
+.wrap{width:min(1200px,100% - 40px);margin-inline:auto}
+section{padding:clamp(60px,8vw,112px) 0;position:relative}
+h1,h2,h3{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.005em;line-height:.95;text-wrap:balance}
+h1{font-size:clamp(3rem,8.4vw,7.6rem);font-weight:800;line-height:.9}
+h2{font-size:clamp(2.6rem,5.8vw,5rem)}
+h3{font-size:1.7rem;line-height:1}
+em{font-style:normal;color:var(--arc)}
+.lead{color:var(--muted);font-size:1.12rem;max-width:34em;text-wrap:pretty}
+.mono{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* botões */
+.btn{display:inline-flex;align-items:center;gap:14px;white-space:nowrap;font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:18px 28px;border:1px solid var(--blue);background:var(--blue);color:#fff;transition:transform 160ms var(--ease),background-color 220ms var(--ease),border-color 220ms var(--ease),translate 320ms var(--ease)}
+.btn::after{content:"";width:18px;height:2px;background:currentColor;transition:width 260ms var(--ease)}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;border-color:var(--line2);color:var(--ink)}
+.btn.light{background:#fff;border-color:#fff;color:var(--navy)}
+.btn[disabled],.btn[aria-disabled=true]{opacity:.4;pointer-events:none}
+.btn.plain::after{display:none}
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{background:var(--blue-h);border-color:var(--blue-h)}
+  .btn:hover::after{width:30px}
+  .btn.ghost:hover{background:rgba(179,195,255,.1);border-color:var(--arc-l)}
+  .btn.light:hover{background:var(--arc-l);border-color:var(--arc-l)}
+}
+
+/* menu */
+header.nav{position:fixed;inset:0 0 auto 0;z-index:50;border-bottom:1px solid transparent;transition:background-color 260ms var(--ease),border-color 260ms var(--ease)}
+header.nav.solid{background:rgba(7,15,45,.9);border-color:var(--line);backdrop-filter:blur(14px)}
+header.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:72px;gap:24px}
+.brand img{height:36px;width:auto}
+nav.links{display:flex;gap:2px;font-size:.95rem}
+nav.links a{padding:10px 14px;color:var(--muted);transition:color 200ms var(--ease)}
+@media (hover:hover) and (pointer:fine){nav.links a:hover{color:var(--ink)}}
+.nav .btn{padding:14px 22px}
+.burger{display:none;width:44px;height:44px;border:1px solid var(--line2);background:none;position:relative}
+.burger i{position:absolute;left:12px;right:12px;height:2px;background:var(--ink);transition:transform 240ms var(--ease),top 240ms var(--ease)}
+.burger i:first-child{top:16px}.burger i:last-child{top:24px}
+.burger[aria-expanded=true] i:first-child{top:20px;transform:rotate(45deg)}
+.burger[aria-expanded=true] i:last-child{top:20px;transform:rotate(-45deg)}
+@media(max-width:1040px){
+  .burger{display:block}.nav>.wrap>.btn{display:none}
+  nav.links{position:fixed;inset:72px 0 auto 0;background:var(--navy0);flex-direction:column;gap:0;padding:10px 20px 24px;border-bottom:1px solid var(--line);font-family:var(--display);font-size:2rem;text-transform:uppercase;font-weight:700;opacity:0;visibility:hidden;translate:0 -8px;transition:opacity 200ms var(--ease),translate 200ms var(--ease),visibility 200ms}
+  nav.links.on{opacity:1;visibility:visible;translate:0}
+  nav.links a{padding:12px 0;color:var(--ink);border-bottom:1px solid var(--line)}
+}
+
+/* barra de rolagem como cordão de soldadura */
+.wrail{position:fixed;right:0;top:0;bottom:0;width:10px;z-index:55;pointer-events:none}
+.wrail .seam{position:absolute;left:4px;top:0;width:2px;height:var(--y,0px);background:linear-gradient(180deg,rgba(42,70,232,.2),var(--arc) 80%,#fff);box-shadow:0 0 10px rgba(107,139,255,.65)}
+.wrail .head{position:absolute;left:5px;top:var(--y,0px);width:0;height:0}
+.wrail .head::before{content:"";position:absolute;left:-14px;top:-14px;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle,#fff 0 12%,rgba(179,195,255,.85) 28%,rgba(107,139,255,.35) 55%,transparent 72%);animation:flick .16s steps(2) infinite}
+.wrail .pct{position:absolute;right:20px;top:-12px;background:var(--navy0);border:1px solid var(--line2);padding:3px 8px;font-family:var(--mono);font-size:.72rem;color:var(--arc-l);opacity:0;translate:8px 0;transition:opacity 200ms var(--ease),translate 200ms var(--ease);white-space:nowrap}
+.wrail.hot .pct{opacity:1;translate:0}
+@keyframes flick{50%{opacity:.78;scale:.9}}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+.fxtoggle{display:flex;align-items:center;gap:9px;background:none;border:1px solid var(--line2);padding:10px 13px;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:auto;margin-right:-8px;transition:color 200ms var(--ease),border-color 200ms var(--ease)}
+.fxtoggle i{width:9px;height:9px;border-radius:50%;background:var(--arc);box-shadow:0 0 8px var(--arc);transition:opacity 200ms}
+.fxtoggle[aria-pressed=false] i{opacity:.25;box-shadow:none}
+@media (hover:hover) and (pointer:fine){.fxtoggle:hover{color:var(--ink);border-color:var(--arc-l)}}
+@media (hover:none),(max-width:1040px){.fxtoggle{display:none}}
+
+/* herói preso à rolagem */
+.hero{height:210dvh;padding:0;position:relative}
+.stick{position:sticky;top:0;height:100dvh;overflow:hidden;display:flex;align-items:center}
+#hcv{position:absolute;inset:0;width:100%;height:100%}
+#h3d{position:absolute;inset:0;width:100%;height:100%;visibility:hidden}
+.hphoto{position:absolute;left:0;top:-6%;width:100%;height:112%;object-fit:cover;filter:grayscale(1) contrast(1.08) brightness(.95);opacity:.5;will-change:transform}
+.proof{padding:0;background:var(--navy0);border-bottom:1px solid var(--line)}
+.proof .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.proof .wrap > div{padding:24px 24px 24px 0;display:grid;gap:6px;align-content:start}
+.proof .wrap > div + div{padding-left:24px;border-left:1px solid var(--line)}
+.proof .mono{color:var(--arc-l)}
+.proof b{font-family:var(--display);font-weight:700;text-transform:uppercase;font-size:clamp(1.4rem,2.2vw,1.9rem);line-height:1.05;letter-spacing:.01em}
+@media(max-width:860px){.proof .wrap{grid-template-columns:1fr 1fr}.proof .wrap > div{padding:20px 16px 20px 0;border-top:1px solid var(--line)}.proof .wrap > div:nth-child(-n+2){border-top:0}.proof .wrap > div:nth-child(odd){padding-left:0;border-left:0}.proof .wrap > div:nth-child(even){padding-left:16px;border-left:1px solid var(--line)}}
+.stick::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(7,15,45,.9) 0%,rgba(7,15,45,.6) 42%,transparent 78%),linear-gradient(0deg,rgba(7,15,45,.85),transparent 28%)}
+.hero-grid{position:relative;z-index:2;padding-top:72px}
+.hero h1{margin-bottom:26px;max-width:9.2em}
+.hero .lead{max-width:28em;margin-bottom:34px;color:#c3cbea}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.tracker{position:absolute;left:0;right:0;bottom:26px;z-index:2}
+.tracker .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 20px;position:relative;padding-top:18px}
+.tracker .wrap::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--line)}
+.tracker .wrap::after{content:"";position:absolute;left:0;top:0;height:2px;width:calc(var(--hp,0) * 100%);background:linear-gradient(90deg,var(--blue),var(--arc-l));box-shadow:0 0 12px rgba(107,139,255,.8)}
+.tracker span{font-family:var(--display);font-weight:700;font-size:clamp(1.05rem,2vw,1.6rem);text-transform:uppercase;letter-spacing:.03em;color:rgba(179,195,255,.4);transition:color 300ms var(--ease)}
+.tracker span.on{color:#fff}
+@media(max-width:700px){.hero{height:170dvh}.tracker .wrap{grid-template-columns:1fr 1fr}}
+@keyframes rise{from{opacity:0;translate:0 18px}}
+@media (prefers-reduced-motion:no-preference){
+  .hero .lead,.hero .cta{animation:rise 800ms var(--ease) both;animation-delay:calc(var(--i,0)*90ms + 600ms)}
+}
+
+/* faixa de materiais e normas (a única faixa deslizante) */
+.mq{border-block:1px solid var(--line);overflow:hidden;padding:20px 0;background:var(--navy0)}
+.mq div{display:flex;width:max-content}
+.mq span{font-family:var(--display);font-weight:700;font-size:clamp(1.8rem,3.4vw,2.8rem);text-transform:uppercase;white-space:nowrap;padding:0 28px;display:flex;align-items:center;gap:56px;color:var(--ink);letter-spacing:.02em}
+.mq span:nth-child(even){color:transparent;-webkit-text-stroke:1px var(--arc)}
+.mq span::after{content:"";width:46px;height:2px;background:var(--line2)}
+@keyframes slide{to{translate:-50% 0}}
+@media (prefers-reduced-motion:no-preference){.mq div{animation:slide 50s linear infinite}.mq:hover div{animation-play-state:paused}}
+
+/* quem somos */
+.about .wrap{display:grid;grid-template-columns:6fr 6fr;gap:clamp(32px,7vw,110px);align-items:start}
+@media(max-width:900px){.about .wrap{grid-template-columns:1fr}}
+.about h2{margin-bottom:22px}
+.about p{color:var(--muted);max-width:34em}
+.about p + p{margin-top:14px}
+.areas{display:grid}
+.areas{grid-template-columns:1fr 1fr}
+.area{padding:24px 20px 24px 0;border-top:1px solid var(--line)}
+.area:nth-last-child(-n+2){border-bottom:1px solid var(--line)}
+.area:nth-child(even){padding-left:22px;border-left:1px solid var(--line)}
+.area h3{font-size:2.2rem;color:var(--arc-l);margin-bottom:6px}
+.area p{color:var(--ink);max-width:none}
+@media(max-width:560px){.areas{grid-template-columns:1fr}.area:nth-child(even){padding-left:0;border-left:0}.area:nth-last-child(2){border-bottom:0}}
+
+/* competências */
+.comp{background:var(--navy0)}
+.comp h2{margin-bottom:12px}
+.comp .head{margin-bottom:40px}
+.cgrid{display:grid;grid-template-columns:6fr 5fr;gap:clamp(24px,5vw,72px);align-items:start}
+@media(max-width:900px){.cgrid{grid-template-columns:1fr}}
+.tabs{display:grid}
+.tab{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:18px 0 18px 22px;position:relative;transition:padding 300ms var(--ease)}
+.tabs .tab:last-child{border-bottom:1px solid var(--line)}
+.tab .h{display:block;font-family:var(--display);font-weight:700;text-transform:uppercase;line-height:1;color:var(--muted);transition:color 240ms var(--ease);font-size:clamp(1.8rem,3vw,2.5rem)}
+.tab::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue);transform:scaleY(0);transform-origin:top;transition:transform 340ms var(--ease)}
+.tab[aria-selected=true]::before{transform:scaleY(1)}
+.tab[aria-selected=true] .h{color:#fff}
+@media (hover:hover) and (pointer:fine){.tab:hover .h{color:var(--ink)}}
+.tp{display:grid;grid-template-rows:0fr;transition:grid-template-rows 340ms var(--ease)}
+.tab[aria-selected=true] .tp{grid-template-rows:1fr}
+.tp > span{display:block;overflow:hidden}
+.pp{display:block;color:var(--muted);padding-top:10px;max-width:34em;font-size:1rem;line-height:1.6}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding-top:14px}
+.chips span{border:1px solid var(--line2);padding:6px 10px;font-family:var(--mono);font-weight:500;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;color:var(--arc-l)}
+.inl{display:none}
+.cshot{position:sticky;top:96px;aspect-ratio:1;background:var(--navy2);overflow:hidden;border:1px solid var(--line)}
+@media(max-width:900px){.cshot{display:none}.inl{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;margin-top:14px;border:1px solid var(--line)}}
+.cshot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(100% 0 0 0);transition:clip-path 700ms cubic-bezier(.77,0,.175,1)}
+.cshot img.on{clip-path:inset(0)}
+.cshot::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,rgba(7,15,45,.55),transparent 40%)}
+
+/* divisória em cordão de soldadura */
+.seam-h{position:relative;height:2px;background:var(--line)}
+.seam-h i{position:absolute;inset:0;background:linear-gradient(90deg,var(--blue),var(--arc-l) 92%,#fff);transform:scaleX(0);transform-origin:left;transition:transform 1.8s cubic-bezier(.6,0,.2,1);box-shadow:0 0 14px rgba(107,139,255,.7)}
+.seam-h.in i{transform:scaleX(1);animation:cool 2.6s ease-out forwards}
+@keyframes cool{to{box-shadow:0 0 0 rgba(107,139,255,0)}}
+
+/* soldadura */
+.weld .wrap{display:grid;grid-template-columns:7fr 5fr;gap:clamp(28px,6vw,96px);align-items:center}
+@media(max-width:900px){.weld .wrap{grid-template-columns:1fr}}
+.weld h2{margin-bottom:16px}
+.norms{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:34px 0;border-block:1px solid var(--line)}
+.norm{padding:22px 22px 22px 0}
+.norm + .norm{padding-left:22px;border-left:1px solid var(--line)}
+.norm b{display:block;font-family:var(--display);font-size:clamp(2.2rem,4vw,3.2rem);font-weight:800;color:#fff;line-height:1;letter-spacing:.01em}
+.norm span{color:var(--muted);font-size:.95rem}
+@media(max-width:560px){.norms{grid-template-columns:1fr}.norm + .norm{padding-left:0;border-left:0;border-top:1px solid var(--line)}}
+.mat-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.mat{background:none;border:1px solid var(--line2);padding:12px 18px;font-family:var(--mono);font-weight:500;font-size:.84rem;letter-spacing:.05em;text-transform:uppercase;transition:background-color 220ms var(--ease),border-color 220ms var(--ease),transform 160ms var(--ease)}
+.mat:active{transform:scale(.97)}
+.mat[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+@media (hover:hover) and (pointer:fine){.mat[aria-pressed=false]:hover{border-color:var(--arc-l)}}
+.mat-out{min-height:5.2em;color:var(--ink);max-width:32em}
+.mat-out small{display:block;color:var(--muted);margin-top:6px;font-size:.95rem}
+.weldshot{aspect-ratio:3/4;border:1px solid var(--line);overflow:hidden;position:relative;background:var(--navy2)}
+.weldshot img{width:100%;height:100%;object-fit:cover}
+.weldshot figcaption{position:absolute;left:0;bottom:0;right:0;padding:44px 18px 16px;background:linear-gradient(0deg,rgba(7,15,45,.92),transparent);font-size:.9rem;color:var(--arc-l)}
+
+/* processo */
+.proc{background:var(--navy0)}
+.proc .wrap{display:grid;grid-template-columns:4fr 7fr;gap:clamp(28px,6vw,96px);align-items:start}
+@media(max-width:900px){.proc .wrap{grid-template-columns:1fr}}
+.proc .sticky{position:sticky;top:110px}
+@media(max-width:900px){.proc .sticky{position:static}}
+.proc h2{margin-bottom:14px}
+.steps{position:relative;list-style:none;padding:0 0 0 54px;--pp:0}
+.steps::before{content:"";position:absolute;left:11px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.steps::after{content:"";position:absolute;left:11px;top:6px;width:2px;height:calc((100% - 12px) * var(--pp));background:linear-gradient(180deg,var(--blue),var(--arc-l));box-shadow:0 0 12px rgba(107,139,255,.8)}
+.step{position:relative;padding:0 0 clamp(30px,4vw,52px);opacity:.38;transition:opacity 400ms var(--ease)}
+.step:last-child{padding-bottom:0}
+.step::before{content:"";position:absolute;left:-52px;top:6px;width:24px;height:24px;background:var(--navy0);border:2px solid var(--line2);transition:border-color 300ms var(--ease),background-color 300ms var(--ease),box-shadow 300ms var(--ease)}
+.step.on{opacity:1}
+.step.on::before{border-color:var(--arc-l);background:var(--blue);box-shadow:0 0 14px rgba(107,139,255,.8)}
+.step h3{font-size:clamp(2rem,3.6vw,3rem);margin-bottom:8px}
+.step p{color:var(--muted);max-width:32em}
+
+/* qualidade, segurança e controlo */
+.qual h2{margin-bottom:12px;max-width:10em}
+.qual .head{margin-bottom:36px}
+.qgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:980px){.qgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.qgrid{grid-template-columns:1fr}}
+.q{position:relative;overflow:hidden;min-height:300px;display:flex;flex-direction:column;justify-content:flex-end;padding:24px;border:1px solid var(--line);isolation:isolate;background:var(--navy2)}
+.q > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;opacity:.5;filter:grayscale(.4);transition:opacity 500ms var(--ease),transform 900ms var(--ease)}
+.q::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,rgba(7,15,45,.96) 18%,rgba(7,15,45,.55) 62%,rgba(10,22,64,.25))}
+.q h3{font-size:2.1rem;margin-bottom:6px;color:#fff;transition:color 240ms var(--ease)}
+.q p{color:#c3cbea;max-width:22em}
+@media (hover:hover) and (pointer:fine){.q:hover > img{opacity:.8;transform:scale(1.05)}.q:hover h3{color:var(--arc-l)}}
+
+/* experiência */
+.exp{background:var(--navy0)}
+.exp h2{margin-bottom:12px}
+.exp .lead{margin-bottom:38px}
+.route{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:40px;position:relative}
+.route::before{content:"";position:absolute;left:0;right:0;top:11px;height:2px;background:var(--line2)}
+.route div{position:relative;padding-top:34px;font-family:var(--display);font-weight:700;font-size:clamp(1.4rem,2.6vw,2.2rem);text-transform:uppercase}
+.route div::before{content:"";position:absolute;left:0;top:0;width:24px;height:24px;background:var(--navy0);border:2px solid var(--arc-l)}
+.route div:nth-child(2){justify-self:center}
+.route div:nth-child(2)::before{left:50%;translate:-50% 0}
+.route div:nth-child(2){text-align:center}
+.route div:nth-child(3){justify-self:end;text-align:right}
+.route div:nth-child(3)::before{left:auto;right:0}
+.jobs{display:grid}
+.job{display:grid;grid-template-columns:150px 1fr 1.2fr;gap:8px 28px;padding:28px 0;border-top:1px solid var(--line);align-items:start;transition:background-color 260ms var(--ease),padding 260ms var(--ease)}
+.jobs .job:last-child{border-bottom:1px solid var(--line)}
+.job .country{color:var(--arc-l)}
+.job h3{font-size:clamp(2.2rem,4.4vw,3.6rem)}
+.job .scope{font-weight:600;color:#fff;margin-bottom:6px}
+.job p{color:var(--muted)}
+@media(max-width:860px){.job{grid-template-columns:1fr;padding:24px 0}}
+@media (hover:hover) and (pointer:fine){.job:hover{background:linear-gradient(90deg,rgba(42,70,232,.16),transparent);padding-left:14px}}
+
+/* obra */
+.gal .wrap{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:30px}
+.arrows{display:flex;gap:8px}
+.arr{width:52px;height:52px;border:1px solid var(--line2);background:none;position:relative;transition:transform 160ms var(--ease),background-color 220ms var(--ease),opacity 200ms var(--ease)}
+.arr:active{transform:scale(.94)}
+.arr::before{content:"";position:absolute;left:50%;top:50%;width:11px;height:11px;border-top:2px solid var(--ink);border-right:2px solid var(--ink);translate:-65% -50%;rotate:45deg}
+.arr.prev::before{rotate:-135deg;translate:-35% -50%}
+.arr[disabled]{opacity:.3;cursor:default}
+@media (hover:hover) and (pointer:fine){.arr:not([disabled]):hover{background:rgba(179,195,255,.1)}}
+.rail{--h:clamp(300px,50vh,480px);display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px max(20px,calc((100vw - 1200px)/2)) 6px;scroll-padding-inline:max(20px,calc((100vw - 1200px)/2));scrollbar-width:none;cursor:grab;user-select:none}
+.rail.drag{cursor:grabbing;scroll-snap-type:none}
+.rail::-webkit-scrollbar{display:none}
+.slide{flex:none;scroll-snap-align:start}
+.open{display:block;padding:0;border:0;background:none;text-align:left;cursor:inherit;position:relative;overflow:hidden;border:1px solid var(--line)}
+.slide img{height:var(--h);width:auto;max-width:none;transition:transform 800ms var(--ease),filter 400ms var(--ease);filter:saturate(.9)}
+@media (hover:hover) and (pointer:fine){.open:hover img{transform:scale(1.045);filter:saturate(1.1)}}
+.slide .cap{margin-top:10px;font-family:var(--mono);font-weight:500;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.js .rail:not(.in) .slide{opacity:0;translate:60px 0}
+.rail .slide{transition:opacity 700ms var(--ease),translate 700ms var(--ease);transition-delay:calc(var(--i) * 60ms)}
+dialog.lb{border:0;background:transparent;padding:0;max-width:none;max-height:none;width:100%;height:100%;margin:0;overflow:hidden;color:var(--ink)}
+dialog.lb::backdrop{background:rgba(5,10,32,.94);backdrop-filter:blur(8px)}
+.lb-in{width:100%;height:100%;display:grid;place-items:center;align-content:center;gap:14px;padding:20px}
+.lb img{max-height:78dvh;max-width:min(94vw,1000px);width:auto;height:auto;animation:zoom 260ms var(--ease)}
+.lb-bar{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap}
+@keyframes zoom{from{opacity:0;scale:.96}}
+
+/* porquê */
+.why{background:var(--navy0)}
+.why .wrap{display:grid;grid-template-columns:5fr 7fr;gap:clamp(28px,6vw,96px);align-items:start}
+@media(max-width:900px){.why .wrap{grid-template-columns:1fr}}
+.why .sticky{position:sticky;top:110px}
+@media(max-width:900px){.why .sticky{position:static}}
+.why h2{margin-bottom:18px}
+.kw{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.kw span{border:1px solid var(--line2);padding:8px 14px;font-family:var(--display);font-weight:600;text-transform:uppercase;font-size:1.1rem;letter-spacing:.04em}
+.reasons{display:grid;grid-template-columns:1fr 1fr;gap:38px 34px}
+@media(max-width:620px){.reasons{grid-template-columns:1fr}}
+.r{padding:18px 0 0;border-top:2px solid var(--blue)}
+.r h3{font-size:clamp(1.8rem,2.8vw,2.3rem);margin-bottom:6px;transition:color 240ms var(--ease)}
+.r p{color:var(--muted);max-width:32em}
+@media (hover:hover) and (pointer:fine){.r:hover h3{color:var(--arc-l)}}
+
+/* contacto */
+.ct h2{margin-bottom:12px;max-width:10em}
+.ct .head{margin-bottom:38px}
+.ctgrid{display:grid;grid-template-columns:7fr 5fr;gap:clamp(28px,5vw,72px);align-items:start}
+@media(max-width:980px){.ctgrid{grid-template-columns:1fr}}
+.form{background:var(--navy2);padding:clamp(22px,3.6vw,40px);border:1px solid var(--line)}
+.fl{display:block;font-size:.9rem;color:var(--muted);margin:22px 0 8px}
+.fl:first-child{margin-top:0}
+.svc{display:flex;flex-wrap:wrap;gap:8px}
+.svc button{background:none;border:1px solid var(--line2);padding:11px 14px;font-size:.92rem;min-height:44px;transition:background-color 220ms var(--ease),border-color 220ms var(--ease),transform 160ms var(--ease)}
+.svc button:active{transform:scale(.97)}
+.svc button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+@media (hover:hover) and (pointer:fine){.svc button[aria-pressed=false]:hover{border-color:var(--arc-l)}}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.two{grid-template-columns:1fr}}
+.form select,.form input,.form textarea{width:100%;background:var(--navy0);border:1px solid var(--line2);color:var(--ink);padding:14px 16px;font:inherit;font-size:1rem;min-height:50px;border-radius:0}
+.form textarea{min-height:110px;resize:vertical}
+.form ::placeholder{color:#8590b8}
+.form select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--arc-l) 50%),linear-gradient(135deg,var(--arc-l) 50%,transparent 50%);background-position:calc(100% - 22px) 22px,calc(100% - 16px) 22px;background-size:6px 6px;background-repeat:no-repeat}
+.sum{margin:26px 0 20px;padding:18px;background:var(--navy0);border-left:3px solid var(--arc);font-family:var(--mono);font-weight:500;font-size:.8rem;line-height:1.7;color:var(--arc-l);white-space:pre-wrap;min-height:6.5em}
+.err{color:#ffb4b4;font-size:.92rem;min-height:1.4em;margin-bottom:6px}
+.hint{color:var(--arc-l);font-size:.95rem;min-height:1.5em;margin-bottom:8px}
+.priv{color:var(--muted);font-size:.88rem;margin-top:16px}
+.sends{display:flex;flex-wrap:wrap;gap:10px}
+.sends .btn{padding:16px 20px}
+.people{display:grid;gap:14px}
+.person{background:#fff;color:var(--navy);padding:22px 24px}
+.person b{display:block;font-family:var(--display);font-size:2rem;text-transform:uppercase;line-height:1;font-weight:700}
+.person small{display:block;font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:#5a6490;margin:6px 0 14px}
+.person a{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:1.15rem}
+.person a span{font-family:var(--mono);font-size:.68rem;font-weight:500;color:#5a6490;letter-spacing:.06em}
+@media (hover:hover) and (pointer:fine){.person a:hover{color:var(--blue)}}
+.addr{margin-top:18px;color:var(--muted);font-size:.98rem;line-height:1.6}
+.addr a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:4px}
+.soc{display:flex;gap:18px;margin-top:14px;flex-wrap:wrap}
+.soc a{text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line2)}
+footer{padding:36px 0 110px;border-top:1px solid var(--line);color:var(--muted);font-size:.93rem}
+footer .wrap{display:flex;justify-content:space-between;gap:20px 30px;flex-wrap:wrap;align-items:center}
+footer img{height:30px;width:auto}
+footer .tag{font-family:var(--display);font-weight:700;text-transform:uppercase;font-size:1.2rem;color:var(--ink);letter-spacing:.04em}
+
+.dock{position:fixed;z-index:40;right:20px;bottom:20px;background:var(--blue);color:#fff;padding:16px 26px;font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 18px 36px -14px rgba(0,0,0,.8);opacity:0;translate:0 16px;pointer-events:none;transition:opacity 240ms var(--ease),translate 240ms var(--ease),transform 160ms var(--ease)}
+.dock.on{opacity:1;translate:0;pointer-events:auto}
+.dock:active{transform:scale(.97)}
+@media(max-width:640px){.dock{left:14px;right:14px;bottom:14px;text-align:center}}
+@media(min-width:1041px){.dock{right:34px}}
+
+/* revelar: títulos por palavra com máscara, blocos por baixo; sem JS tudo fica visível */
+.js .rv{opacity:0;translate:0 22px;transition:opacity 600ms var(--ease),translate 600ms var(--ease);transition-delay:calc(var(--d,0) * 70ms)}
+.js .rv.in{opacity:1;translate:0}
+.js .rv.wsplit{opacity:1;translate:0}
+.wm{display:inline-block;overflow:hidden;vertical-align:top;padding:.16em 0 .05em;margin:-.16em 0 -.05em}
+.js .wsplit .w{display:inline-block;translate:0 108%;transition:translate 820ms cubic-bezier(.16,1,.3,1);transition-delay:calc(var(--w) * 55ms)}
+.js .wsplit.in .w{translate:0}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .js .rv,.js .rail .slide{opacity:1;translate:0}.js .wsplit .w{translate:0}.seam-h i{transform:scaleX(1)}
+}
+</style>
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Saltar para o conteúdo</a>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="wrail" id="wrail" aria-hidden="true"><i class="seam"></i><i class="head"><b class="pct" id="pct">0%</b></i></div>
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a href="#inicio" class="brand" aria-label="STMetal, início"><img src="assets/logo.png" width="640" height="196" alt="STMetal"></a>
+    <nav class="links" id="links" aria-label="Menu principal">
+      <a href="#competencias">Competências</a><a href="#soldadura">Soldadura</a><a href="#processo">Processo</a><a href="#experiencia">Experiência</a><a href="#obra">Obra</a><a href="#contacto">Contacto</a>
+    </nav>
+    <button class="fxtoggle" id="fxt" type="button" aria-pressed="true" title="Ativar ou desativar as faíscas do rato"><i></i>Faíscas</button>
+    <a class="btn" href="#contacto">Pedir orçamento</a>
+    <button class="burger" id="burger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="links"><i></i><i></i></button>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero" id="inicio">
+  <div class="stick">
+    <img class="hphoto" id="hph" src="assets/st-23.jpg" alt="" aria-hidden="true" decoding="async"><canvas id="hcv" aria-hidden="true"></canvas><canvas id="h3d" aria-hidden="true"></canvas>
+    <div class="wrap hero-grid">
+      <h1>Metalomecânica para projetos <em>exigentes.</em></h1>
+      <p class="lead" style="--i:0">Fabricação, soldadura, montagem e manutenção industrial em Portugal, Espanha e Itália.</p>
+      <div class="cta" style="--i:1">
+        <a class="btn" href="#contacto">Pedir orçamento</a>
+        <a class="btn ghost" href="#competencias">Ver competências</a>
+      </div>
+    </div>
+    <div class="tracker" aria-hidden="true"><div class="wrap" id="trk"><span>Fabricação</span><span>Soldadura</span><span>Montagem</span><span>Manutenção</span></div></div>
+  </div>
+</section>
+
+<section class="proof" aria-label="A STMetal em resumo">
+  <div class="wrap">
+    <div><span class="mono">Localização</span><b>Leiria, Portugal</b></div>
+    <div><span class="mono">Atuação</span><b>Portugal, Espanha, Itália</b></div>
+    <div><span class="mono">Clientes</span><b>Cameto, Negratin, AJS, Co.Get</b></div>
+    <div><span class="mono">Normas</span><b>ASME IX, ISO 9606</b></div>
+  </div>
+</section>
+
+<div class="mq" aria-hidden="true"><div id="mq"></div></div>
+
+<section class="about" id="quem-somos">
+  <div class="wrap">
+    <div>
+      <h2 class="rv">Execução <em>industrial.</em></h2>
+      <p>A STMetal é uma empresa especializada em soluções metalomecânicas para o setor industrial, com capacidade para executar serviços de fabricação, montagem, soldadura e manutenção industrial.</p>
+      <p>Da preparação técnica à execução em obra, adaptamos as nossas equipas e soluções às necessidades de cada projeto.</p>
+    </div>
+    <div class="areas">
+      <div class="area rv"><h3>Fabricação</h3><p>Tubagem, caldeiraria e estruturas metálicas.</p></div>
+      <div class="area rv" style="--d:1"><h3>Soldadura</h3><p>Aço carbono, inox, Super Duplex e P22, P91, P92.</p></div>
+      <div class="area rv" style="--d:2"><h3>Montagem</h3><p>Montagem, instalação e execução em obra.</p></div>
+      <div class="area rv" style="--d:3"><h3>Manutenção</h3><p>Intervenção e apoio às necessidades de manutenção industrial.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="comp" id="competencias">
+  <div class="wrap">
+    <div class="head"><h2 class="rv">Sete áreas de <em>competência.</em></h2><p class="lead">Sustentam os projetos da STMetal.</p></div>
+    <div class="cgrid">
+      <div class="tabs" id="tabs" role="tablist" aria-label="Áreas de competência" aria-orientation="vertical"></div>
+      <div class="cshot" id="cshot" role="tabpanel" aria-labelledby="t0"></div>
+    </div>
+  </div>
+</section>
+
+<div class="seam-h" aria-hidden="true"><i></i></div>
+
+<section class="weld" id="soldadura">
+  <div class="wrap">
+    <div>
+      <h2 class="rv">Soldadura industrial <em>qualificada.</em></h2>
+      <p class="lead">Preparação e execução de soldaduras para aplicações industriais, incluindo materiais de elevada exigência técnica.</p>
+      <div class="norms">
+        <div class="norm"><b>ASME IX</b><span>Procedimentos e requisitos de qualificação.</span></div>
+        <div class="norm"><b>ISO 9606</b><span>Qualificação de soldadores.</span></div>
+      </div>
+      <div class="mat-pills" id="mats" role="group" aria-label="Materiais"></div>
+      <div class="mat-out" id="matout" aria-live="polite"></div>
+    </div>
+    <figure class="weldshot"><img src="assets/st-09.jpg" width="960" height="1280" alt="Cordão de soldadura numa tubagem em aço inox" loading="lazy" decoding="async"><figcaption>Soldadura em aço inox</figcaption></figure>
+  </div>
+</section>
+
+<section class="proc" id="processo">
+  <div class="wrap">
+    <div class="sticky">
+      <h2 class="rv">Como <em>trabalhamos.</em></h2>
+      <p class="lead">O processo que aplicamos do primeiro contacto à entrega final de cada projeto.</p>
+    </div>
+    <ol class="steps" id="steps">
+      <li class="step"><h3>Analisamos</h3><p>Entendemos o projeto e os requisitos técnicos.</p></li>
+      <li class="step"><h3>Planeamos</h3><p>Definimos recursos, equipa e prazos.</p></li>
+      <li class="step"><h3>Executamos</h3><p>Fabricamos, soldamos, montamos ou intervimos conforme o projeto.</p></li>
+      <li class="step"><h3>Controlamos</h3><p>Acompanhamos qualidade e requisitos técnicos.</p></li>
+      <li class="step"><h3>Entregamos</h3><p>Concluímos o trabalho com foco na qualidade e satisfação do cliente.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="qual" id="qualidade">
+  <div class="wrap">
+    <div class="head"><h2 class="rv">Qualidade, segurança e <em>controlo.</em></h2><p class="lead">Seis pilares que sustentam cada projeto da STMetal.</p></div>
+    <div class="qgrid">
+      <div class="q rv"><img src="assets/st-26.jpg" alt="" loading="lazy" decoding="async"><h3>Planeamento</h3><p>Preparação técnica antes da execução.</p></div>
+      <div class="q rv" style="--d:1"><img src="assets/st-23.jpg" alt="" loading="lazy" decoding="async"><h3>Controlo dimensional</h3><p>Acompanhamento das dimensões e requisitos do projeto.</p></div>
+      <div class="q rv" style="--d:2"><img src="assets/st-11.jpg" alt="" loading="lazy" decoding="async"><h3>Soldadura</h3><p>Execução por profissionais qualificados.</p></div>
+      <div class="q rv"><img src="assets/st-07.jpg" alt="" loading="lazy" decoding="async" style="object-position:center 40%"><h3>Inspeção</h3><p>Controlo das juntas e requisitos técnicos.</p></div>
+      <div class="q rv" style="--d:1"><img src="assets/st-27.jpg" alt="" loading="lazy" decoding="async"><h3>Segurança</h3><p>Procedimentos orientados para uma execução segura.</p></div>
+      <div class="q rv" style="--d:2"><img src="assets/st-09.jpg" alt="" loading="lazy" decoding="async"><h3>Materiais especiais</h3><p>Experiência em Super Duplex, P22, P91 e P92.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="seam-h" aria-hidden="true"><i></i></div>
+
+<section class="exp" id="experiencia">
+  <div class="wrap">
+    <h2 class="rv">Experiência <em>industrial.</em></h2>
+    <p class="lead">Projetos e serviços executados para parceiros industriais em Portugal e no mercado europeu.</p>
+    <div class="route" aria-label="Atuação internacional"><div>Portugal</div><div>Espanha</div><div>Itália</div></div>
+    <div class="jobs">
+      <article class="job rv"><span class="mono country">Espanha</span><h3>Cameto</h3><div><p class="scope">Reforço de mão de obra para fabricação e montagem</p><p>A STMetal disponibiliza mão de obra especializada para reforço das equipas de fabricação e montagem, de acordo com as necessidades do projeto.</p></div></article>
+      <article class="job rv"><span class="mono country">Espanha</span><h3>Negratin</h3><div><p class="scope">Fabricação, montagem e tubagem industrial</p><p>Trabalhos de fabricação e montagem de tubagens industriais, integrando as equipas e necessidades específicas do projeto.</p></div></article>
+      <article class="job rv"><span class="mono country">Espanha</span><h3>AJS</h3><div><p class="scope">Manutenção, intervenção e apoio técnico</p><p>Prestação de serviços de manutenção industrial, com intervenção das equipas STMetal de acordo com as necessidades operacionais do cliente.</p></div></article>
+      <article class="job rv"><span class="mono country">Itália</span><h3>Co.Get</h3><div><p class="scope">Montagem industrial, soldadura e tubagem</p><p>Execução de serviços de montagem e soldadura especial de tubagens, com foco em trabalhos de elevada exigência técnica.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="gal" id="obra">
+  <div class="wrap">
+    <h2 class="rv">Fabricação e montagem em <em>imagens.</em></h2>
+    <div class="arrows"><button class="arr prev" id="prev" type="button" aria-label="Foto anterior"></button><button class="arr next" id="next" type="button" aria-label="Próxima foto"></button></div>
+  </div>
+  <div class="rail" id="rail" tabindex="0" role="region" aria-label="Galeria de projetos"></div>
+</section>
+
+<section class="why" id="porque">
+  <div class="wrap">
+    <div class="sticky">
+      <h2 class="rv">Porquê escolher a <em>STMetal?</em></h2>
+      <p class="lead">As razões que fazem da STMetal o parceiro certo para o seu projeto.</p>
+      <div class="kw" aria-label="Princípios"><span>Qualidade</span><span>Segurança</span><span>Competência</span><span>Flexibilidade</span><span>Compromisso</span><span>Cliente</span></div>
+    </div>
+    <div class="reasons">
+      <div class="r rv"><h3>Competência técnica</h3><p>Experiência em fabricação, soldadura e montagem industrial.</p></div>
+      <div class="r rv"><h3>Materiais especiais</h3><p>Super Duplex, P22, P91 e P92.</p></div>
+      <div class="r rv"><h3>Solução integrada</h3><p>Fabricação, soldadura, montagem e manutenção.</p></div>
+      <div class="r rv"><h3>Equipas especializadas</h3><p>Profissionais adaptados às necessidades de cada projeto.</p></div>
+      <div class="r rv"><h3>Flexibilidade</h3><p>Capacidade de reforçar equipas e executar diferentes tipos de trabalhos.</p></div>
+      <div class="r rv"><h3>Experiência internacional</h3><p>Atuação em Portugal, Espanha e Itália.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="seam-h" aria-hidden="true"><i></i></div>
+
+<section class="ct" id="contacto">
+  <div class="wrap">
+    <div class="head"><h2 class="rv">Tem um projeto <em>industrial?</em></h2><p class="lead">Fale com a equipa STMetal: avaliação técnica, orçamento e solução personalizada.</p></div>
+    <div class="ctgrid">
+      <form class="form" id="form" novalidate>
+        <span class="fl" id="svcL">Que serviço procura?</span>
+        <div class="svc" id="svc" role="group" aria-labelledby="svcL"></div>
+        <div class="two">
+          <div><label class="fl" for="mat">Material</label><select id="mat"><option>A definir</option><option>Aço carbono</option><option>Inox</option><option>Super Duplex</option><option>P22, P91 ou P92</option></select></div>
+          <div><label class="fl" for="pais">País da obra</label><select id="pais"><option>Portugal</option><option>Espanha</option><option>Itália</option><option>Outro</option></select></div>
+        </div>
+        <label class="fl" for="desc">Descreva o projeto</label>
+        <textarea id="desc" placeholder="Âmbito, prazos, normas aplicáveis..." maxlength="600"></textarea>
+        <div class="two">
+          <div><label class="fl" for="nome">Nome</label><input id="nome" autocomplete="name" maxlength="80"></div>
+          <div><label class="fl" for="emp">Empresa</label><input id="emp" autocomplete="organization" maxlength="80"></div>
+        </div>
+        <div class="sum" id="sum" aria-live="polite"></div>
+                <p class="hint" id="hint" aria-live="polite"></p>
+        <p class="err" id="err" role="alert"></p>
+                <p class="priv">Este formulário não guarda dados: monta a mensagem e abre o seu WhatsApp ou e-mail.</p>
+        <div class="sends">
+          <a class="btn plain" id="wa1" href="#" target="_blank" rel="noopener">WhatsApp, Paulo Silva</a>
+          <a class="btn ghost plain" id="wa2" href="#" target="_blank" rel="noopener">WhatsApp, Vilson Garcia</a>
+          <a class="btn ghost plain" id="mail" href="#">E-mail</a>
+          <button class="btn ghost plain" id="copy" type="button">Copiar resumo</button>
+        </div>
+      </form>
+      <div>
+        <div class="people">
+          <div class="person"><b>Paulo Silva</b><small>Technical &amp; Estimation Manager</small><a href="https://wa.me/351931122712" target="_blank" rel="noopener">+351 931 122 712 <span>WhatsApp</span></a></div>
+          <div class="person"><b>Vilson Garcia</b><small>Welding &amp; Engineering Manager</small><a href="https://wa.me/34685328793" target="_blank" rel="noopener">+34 685 328 793 <span>WhatsApp</span></a></div>
+        </div>
+        <p class="addr">R do Cruzeiro, UBR, Portuguinho, LT 13 2 Dto,<br>Leiria 2400-441, Portugal<br><a href="mailto:stmetal.servicos@gmail.com">stmetal.servicos@gmail.com</a></p>
+        <div class="soc"><a href="https://www.linkedin.com/in/stmetal-solucoes-industriais/" target="_blank" rel="noopener">LinkedIn</a><a href="https://www.instagram.com/stmetal.servicos/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=R+do+Cruzeiro+Portuguinho+Leiria+2400-441" target="_blank" rel="noopener">Ver no mapa</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <img src="assets/logo.png" width="640" height="196" alt="STMetal">
+    <span class="tag">Qualidade, Segurança, Compromisso</span>
+    <span>STMetal, soluções industriais e metalomecânica <span id="yr"></span></span>
+  </div>
+</footer>
+
+<a class="dock" id="dock" href="#contacto">Pedir orçamento</a>
+
+<dialog class="lb" id="lb" aria-label="Foto ampliada">
+  <div class="lb-in" id="lbIn">
+    <img alt="">
+    <div class="lb-bar"><span class="mono" id="lbT"></span><button class="btn ghost plain" type="button" id="lbX">Fechar</button></div>
+  </div>
+</dialog>
+
+<noscript><p style="padding:20px;text-align:center">Para pedir um orçamento: stmetal.servicos@gmail.com, +351 931 122 712 (WhatsApp).</p></noscript>
+
+<script>
+/* DADOS. Fonte: apresentação STMetal 2026 (texto, contactos, clientes e fotografias). */
+const CONFIG = {
+  email: 'stmetal.servicos@gmail.com',
+  people: { paulo: {n:'Paulo Silva', wa:'351931122712'}, vilson: {n:'Vilson Garcia', wa:'34685328793'} }
+};
+const COMP = [
+  {t:'Tubagem industrial', p:'Fabricação, preparação, montagem e instalação de tubagens industriais.', c:['Fabricação de tubagem','Montagem industrial','Soldadura e controlo'], i:'st-10', a:'Coletor de tubagem industrial montado numa oficina', pos:'center 55%'},
+  {t:'Materiais especiais', p:'Experiência na preparação, fabricação e soldadura de materiais destinados a aplicações industriais de elevada exigência técnica.', c:['Super Duplex','P22','P91','P92'], i:'st-07', a:'Tubo em aço inox com cordão de soldadura circular', pos:'center 40%'},
+  {t:'Soldadura qualificada', p:'Soldadura industrial para diferentes materiais e aplicações.', c:['ASME IX','ISO 9606','Aço carbono','Inox'], i:'st-11', a:'Junta soldada entre flange e tubo em inox', pos:'center 45%'},
+  {t:'Pré-fabrico de tubagem', p:'Corte, preparação, montagem e soldadura. Pré-fabricação controlada para otimizar a execução e reduzir o tempo de intervenção em obra.', c:['Corte e preparação','Montagem','Soldadura técnica','Controlo final'], i:'st-13', a:'Troços de tubagem pré-fabricados sobre uma mesa de trabalho', pos:'center 50%'},
+  {t:'Caldeiraria industrial', p:'Fabricação de componentes metálicos à medida para diferentes aplicações industriais.', c:['Fabricação à medida','Conformação e soldadura','Montagem industrial','Inspeção e acabamento'], i:'st-20', a:'Tê de grandes dimensões em aço, fabricado na oficina', pos:'center 55%'},
+  {t:'Estruturas metálicas', p:'Fabricação e montagem de estruturas para aplicações industriais e civis.', c:['Corte e preparação','Fabricação','Montagem e soldadura','Controlo dimensional'], i:'st-23', a:'Vigas metálicas em fabricação num pavilhão industrial', pos:'center 55%'},
+  {t:'Montagem industrial', p:'Montagem e instalação de componentes e estruturas em ambiente industrial, de acordo com os requisitos técnicos e de segurança de cada projeto.', c:['Preparação técnica','Montagem industrial','Instalação e ajustes'], i:'st-22', a:'Montagem de condutas numa instalação industrial, com grua', pos:'center 50%'}
+];
+const MATS = [
+  {n:'Aço carbono', d:'Soldadura industrial para diferentes materiais e aplicações.'},
+  {n:'Inox', d:'Soldadura industrial para diferentes materiais e aplicações.'},
+  {n:'Super Duplex', d:'Aplicações de elevada resistência à corrosão.'},
+  {n:'P22, P91, P92', d:'Materiais para aplicações de elevada exigência térmica e mecânica.'}
+];
+const GAL = [
+  ['st-27','Montagem industrial','Pórtico metálico a ser içado por grua'],['st-02','Caldeiraria','Vaso de pressão em fabricação'],['st-28','Estruturas metálicas','Estrutura curva em fabricação'],
+  ['st-16','Tubagem industrial','Fabricação de tubagem numa bancada'],['st-05','Montagem industrial','Equipamento instalado em cobertura'],['st-03','Caldeiraria','Vaso com bocais de ligação'],
+  ['st-12','Pré-fabrico','Tubos cortados e preparados'],['st-21','Caldeiraria','Curva de grande diâmetro'],['st-24','Estruturas metálicas','Oficina de estruturas'],
+  ['st-06','Tubagem industrial','Tubagem com isolamento e estrutura vermelha'],['st-15','Tubagem industrial','Flange e tubo preparados'],['st-17','Tubagem industrial','Curva de tubagem em inox'],
+  ['st-19','Caldeiraria','Cilindro com derivação inclinada'],['st-04','Caldeiraria','Vaso em oficina']
+];
+const SERVICES = ['Tubagem industrial','Soldadura qualificada','Pré-fabrico de tubagem','Caldeiraria industrial','Estruturas metálicas','Montagem industrial','Manutenção','Reforço de mão de obra'];
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const A = p => (window.__IMG && window.__IMG[p]) || p;   /* no arquivo único, devolve a foto embutida */
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+$('#yr').textContent = '© ' + new Date().getFullYear();
+
+/* faíscas: partículas leves em canvas, usadas no herói, no cursor e na barra de rolagem */
+class Sparks {
+  constructor(){ this.a = []; }
+  emit(x, y, n, s = 1, dx = 0, dy = -1){
+    for (let i = 0; i < n; i++){
+      const ang = Math.random() * Math.PI * 2, sp = (120 + Math.random() * 420) * s;
+      this.a.push({x, y, vx: Math.cos(ang) * sp * .8 + dx * 170, vy: Math.sin(ang) * sp * .8 + dy * 120 - 70, l: 0, m: .5 + Math.random() * .7, w: Math.random() < .14});
+    }
+    if (this.a.length > 280) this.a.splice(0, this.a.length - 280);
+  }
+  step(dt){
+    for (const p of this.a){ p.l += dt; p.vy += 900 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= .992; }
+    this.a = this.a.filter(p => p.l < p.m);
+  }
+  draw(c){
+    c.globalCompositeOperation = 'lighter'; c.lineWidth = 1.5; c.lineCap = 'round';
+    for (const p of this.a){
+      const k = 1 - p.l / p.m;
+      c.strokeStyle = p.w ? `rgba(255,176,96,${k})` : `rgba(196,212,255,${k})`;
+      c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * .035, p.y - p.vy * .035); c.stroke();
+    }
+    c.globalCompositeOperation = 'source-over';
+  }
+}
+
+/* menu */
+const nav = $('#nav'), links = $('#links'), burger = $('#burger');
+const setMenu = on => { links.classList.toggle('on', on); burger.setAttribute('aria-expanded', on); burger.setAttribute('aria-label', on ? 'Fechar menu' : 'Abrir menu'); };
+burger.addEventListener('click', () => setMenu(!links.classList.contains('on')));
+links.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
+addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+/* faixa de materiais e normas */
+const mqw = ['Aço carbono','Inox','Super Duplex','P22','P91','P92','ASME IX','ISO 9606'];
+$('#mq').innerHTML = [...mqw, ...mqw].map(t => `<span>${t}</span>`).join('');
+
+/* competências: separadores com foto que se revela */
+const tabs = $('#tabs'), shot = $('#cshot');
+tabs.innerHTML = COMP.map((c, i) => `<button class="tab" role="tab" id="t${i}" aria-selected="${i === 0}" aria-controls="cshot" tabindex="${i ? -1 : 0}"><span class="h">${c.t}</span><span class="tp"><span><img class="inl" src="${A('assets/' + c.i + '.jpg')}" alt="${esc(c.a)}" style="object-position:${c.pos}" loading="lazy" decoding="async"><span class="pp">${c.p}</span><span class="chips">${c.c.map(x => `<span>${x}</span>`).join('')}</span></span></span></button>`).join('');
+shot.innerHTML = COMP.map((c, i) => `<img class="${i === 0 ? 'on' : ''}" src="${A('assets/' + c.i + '.jpg')}" alt="${esc(c.a)}" style="object-position:${c.pos}" decoding="async">`).join('');
+function pick(i, focus){
+  $$('.tab').forEach((t, k) => { t.setAttribute('aria-selected', k === i); t.tabIndex = k === i ? 0 : -1; });
+  [...shot.children].forEach((im, k) => im.classList.toggle('on', k === i));
+  shot.setAttribute('aria-labelledby', 't' + i);
+  if (focus) $$('.tab')[i].focus();
+}
+tabs.addEventListener('click', e => { const t = e.target.closest('.tab'), i = $$('.tab').indexOf(t); if (i < 0) return; pick(i); if (matchMedia('(max-width:900px)').matches) setTimeout(() => t.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block: 'nearest'}), 380); });
+tabs.addEventListener('keydown', e => {
+  const cur = $$('.tab').findIndex(t => t.getAttribute('aria-selected') === 'true');
+  const k = {ArrowDown:1, ArrowRight:1, ArrowUp:-1, ArrowLeft:-1}[e.key]; if (!k) return;
+  pick((cur + k + COMP.length) % COMP.length, true); e.preventDefault();
+});
+
+/* materiais */
+const mats = $('#mats');
+mats.innerHTML = MATS.map((m, i) => `<button class="mat" type="button" aria-pressed="${i === 2}">${m.n}</button>`).join('');
+function showMat(i){
+  $$('.mat').forEach((b, k) => b.setAttribute('aria-pressed', k === i));
+  $('#matout').innerHTML = `<b>${MATS[i].n}</b><br>${MATS[i].d}<small>Execução conforme os requisitos técnicos do projeto.</small>`;
+}
+mats.addEventListener('click', e => { const i = $$('.mat').indexOf(e.target.closest('.mat')); if (i >= 0) showMat(i); });
+showMat(2);
+
+/* galeria em tira: setas, teclado e arrastar com o rato */
+const rail = $('#rail');
+rail.innerHTML = GAL.map((g, i) => `<article class="slide" style="--i:${i}" data-src="${A('assets/' + g[0] + '.jpg')}" data-cap="${esc(g[1])}" data-alt="${esc(g[2])}"><button class="open" type="button" aria-label="Ampliar: ${esc(g[2])}"><img src="${A('assets/' + g[0] + '.jpg')}" alt="${esc(g[2])}" loading="lazy" decoding="async"></button><div class="cap">${esc(g[1])}</div></article>`).join('');
+const prevB = $('#prev'), nextB = $('#next');
+const step = () => rail.firstElementChild.getBoundingClientRect().width + 16;
+prevB.addEventListener('click', () => rail.scrollBy({left:-step() * 1.5, behavior: reduce ? 'auto' : 'smooth'}));
+nextB.addEventListener('click', () => rail.scrollBy({left:step() * 1.5, behavior: reduce ? 'auto' : 'smooth'}));
+rail.addEventListener('keydown', e => { if (e.key === 'ArrowRight') { nextB.click(); e.preventDefault(); } if (e.key === 'ArrowLeft') { prevB.click(); e.preventDefault(); } });
+let atick = 0;
+const arrows = () => { prevB.disabled = rail.scrollLeft < 4; nextB.disabled = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4; atick = 0; };
+rail.addEventListener('scroll', () => { if (!atick) atick = requestAnimationFrame(arrows); }, {passive:true});
+addEventListener('resize', arrows); arrows();
+let down = false, moved = 0, sx = 0, sl = 0;
+rail.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') return; down = true; moved = 0; sx = e.clientX; sl = rail.scrollLeft; });
+addEventListener('pointermove', e => { if (!down) return; const dx = e.clientX - sx; moved = Math.max(moved, Math.abs(dx)); if (moved > 5) { rail.classList.add('drag'); rail.scrollLeft = sl - dx; } });
+addEventListener('pointerup', () => { if (!down) return; down = false; setTimeout(() => rail.classList.remove('drag'), 0); });
+const lb = $('#lb'), lbi = lb.querySelector('img');
+rail.addEventListener('click', e => {
+  if (moved > 5) { moved = 0; return; }
+  const b = e.target.closest('.open'); if (!b) return;
+  const s = b.closest('.slide'); lbi.src = s.dataset.src; lbi.alt = s.dataset.alt; $('#lbT').textContent = s.dataset.cap; lb.showModal();
+});
+$('#lbX').addEventListener('click', () => lb.close());
+lb.addEventListener('click', e => { if (e.target === lb || e.target.id === 'lbIn') lb.close(); });
+
+/* orçamento: monta o resumo e envia por WhatsApp ou e-mail */
+const svc = $('#svc'), chosen = new Set();
+svc.innerHTML = SERVICES.map(s => `<button type="button" aria-pressed="false">${s}</button>`).join('');
+const fields = () => ({nome: $('#nome').value.trim(), emp: $('#emp').value.trim(), mat: $('#mat').value, pais: $('#pais').value, desc: $('#desc').value.trim()});
+function summary(){
+  const f = fields();
+  return `Olá! Gostaria de pedir um orçamento.\nServiços: ${[...chosen].join(', ') || '(por escolher)'}\nMaterial: ${f.mat}\nLocal da obra: ${f.pais}${f.desc ? '\nProjeto: ' + f.desc : ''}${f.nome || f.emp ? '\nContacto: ' + [f.nome, f.emp].filter(Boolean).join(', ') : ''}`;
+}
+function refresh(){
+  const m = summary(), ok = chosen.size > 0;
+  $('#sum').textContent = m;
+  $('#wa1').href = `https://wa.me/${CONFIG.people.paulo.wa}?text=${encodeURIComponent(m)}`;
+  $('#wa2').href = `https://wa.me/${CONFIG.people.vilson.wa}?text=${encodeURIComponent(m)}`;
+  $('#mail').href = `mailto:${CONFIG.email}?subject=${encodeURIComponent('Pedido de orçamento')}&body=${encodeURIComponent(m)}`;
+  ['#wa1','#wa2','#mail'].forEach(s => $(s).setAttribute('aria-disabled', ok ? 'false' : 'true'));
+  $('#copy').disabled = !ok;
+  $('#err').textContent = '';
+  $('#hint').textContent = ok ? '' : 'Escolha ao menos um serviço para ativar os envios.';
+}
+svc.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on);
+  on ? chosen.add(b.textContent) : chosen.delete(b.textContent); refresh();
+});
+$('#form').addEventListener('input', refresh);
+$('#form').addEventListener('submit', e => e.preventDefault());
+['#wa1','#wa2','#mail'].forEach(s => $(s).addEventListener('click', e => { if ($(s).getAttribute('aria-disabled') === 'true') e.preventDefault(); }));
+$('#copy').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(summary()); $('#copy').textContent = 'Copiado'; setTimeout(() => $('#copy').textContent = 'Copiar resumo', 1800); }
+  catch { $('#err').textContent = 'Não foi possível copiar. Selecione o resumo e copie manualmente.'; }
+});
+refresh();
+$('#err').textContent = '';
+
+/* títulos por palavra, com máscara (mantém a cor das palavras destacadas) */
+function splitWords(h){
+  h.setAttribute('aria-label', h.textContent.trim());
+  let n = 0;
+  const wrap = (txt, tag) => txt.split(/\s+/).filter(Boolean).map(w => { const s = `<span class="wm" aria-hidden="true"><span class="w" style="--w:${n++}">${esc(w)}</span></span>`; return tag ? `<${tag}>${s}</${tag}>` : s; }).join(' ');
+  h.innerHTML = [...h.childNodes].map(c => c.nodeType === 3 ? wrap(c.textContent) : wrap(c.textContent, c.tagName.toLowerCase())).join(' ');
+  h.classList.add('wsplit');
+}
+const h1 = $('h1'); splitWords(h1); requestAnimationFrame(() => requestAnimationFrame(() => h1.classList.add('in')));
+$$('h2.rv').forEach(splitWords);
+
+/* revelar ao rolar */
+const io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; e.target.classList.add('in'); io.unobserve(e.target); }), {threshold:.12});
+$$('.rv, .seam-h').forEach(el => io.observe(el));
+const railIO = new IntersectionObserver(([e]) => { if (e.isIntersecting) { rail.classList.add('in'); railIO.disconnect(); } }, {threshold:.15});
+railIO.observe(rail);
+setTimeout(() => $$('.rv:not(.in), .seam-h:not(.in), .rail:not(.in)').forEach(el => { const r = el.getBoundingClientRect(); if (r.top < innerHeight && r.bottom > 0) el.classList.add('in'); }), 2500);
+
+/* processo: o cordão desce com a rolagem e acende cada passo */
+const stepsEl = $('#steps'), stepItems = $$('.step');
+let procOn = false;
+new IntersectionObserver(([e]) => { procOn = e.isIntersecting; if (procOn) updateProc(); }, {rootMargin:'20% 0px'}).observe(stepsEl);
+function updateProc(){
+  const r = stepsEl.getBoundingClientRect(), p = clamp((innerHeight * .62 - r.top) / (r.height * .92));
+  stepsEl.style.setProperty('--pp', p.toFixed(3));
+  stepItems.forEach((s, i) => s.classList.toggle('on', p > (i + .15) / stepItems.length));
+}
+
+/* ====== soldadura: herói preso à rolagem ====== */
+const hero = $('#inicio'), hc = $('#hcv'), hx = hc.getContext('2d'), hph = $('#hph');
+const hs = new Sparks(); let HW = 0, HH = 0, heroOn = true, hLast = 0, hraf = 0, emitAcc = 0;
+function sizeHero(){
+  const d = Math.min(devicePixelRatio || 1, 1.5), r = hc.getBoundingClientRect(); HW = r.width; HH = r.height;
+  hc.width = Math.round(HW * d); hc.height = Math.round(HH * d); hx.setTransform(d, 0, 0, d, 0, 0);
+}
+function heroProgress(){ const span = hero.offsetHeight - innerHeight; return span > 0 ? clamp(scrollY / span) : 0; }
+const PIPES = [{y:.22, hh:62, sp:.42, sc:.55, a:.5},{y:.56, hh:150, sp:1, sc:1, a:1},{y:.9, hh:74, sp:1.55, sc:.8, a:.78}];
+function drawHero(t, p, dt){
+  const w = HW, h = HH, c = hx; if (!w) return;
+  c.clearRect(0, 0, w, h); const bg = c.createLinearGradient(0, 0, 0, h); bg.addColorStop(0, 'rgba(12,28,85,.80)'); bg.addColorStop(.55, 'rgba(10,22,64,.84)'); bg.addColorStop(1, 'rgba(5,11,36,.93)');
+  c.fillStyle = bg; c.fillRect(0, 0, w, h);
+  /* quadrícula técnica que desliza com a rolagem */
+  const st = 76, ox = -((p * 700 + t * 8) % st), oy = -((p * 90) % st);
+  c.strokeStyle = 'rgba(143,166,255,.06)'; c.lineWidth = 1; c.beginPath();
+  for (let x = ox; x < w; x += st){ c.moveTo(x, 0); c.lineTo(x, h); }
+  for (let y = oy; y < h; y += st){ c.moveTo(0, y); c.lineTo(w, y); }
+  c.stroke();
+  const xArc = w * (w > 760 ? .74 : .58); let yArc = 0, near = 9999;
+  PIPES.forEach((pp, pi) => {
+    const spacing = 560 * pp.sc, off = (p * 2800 + t * 18) * pp.sp, yc = h * pp.y, y0 = yc - pp.hh / 2;
+    const pg = c.createLinearGradient(0, y0, 0, y0 + pp.hh);
+    pg.addColorStop(0, `rgba(22,38,100,${pp.a})`); pg.addColorStop(.14, `rgba(150,168,228,${pp.a * .9})`); pg.addColorStop(.3, `rgba(72,92,166,${pp.a})`); pg.addColorStop(.72, `rgba(22,36,92,${pp.a})`); pg.addColorStop(1, `rgba(8,14,44,${pp.a})`);
+    c.fillStyle = pg; c.fillRect(0, y0, w, pp.hh);
+    const k0 = Math.floor(off / spacing) - 1, k1 = Math.floor((off + w) / spacing) + 2;
+    for (let k = k0; k <= k1; k++){
+      const x = k * spacing - off + spacing * .4;
+      c.fillStyle = `rgba(9,18,56,${pp.a * .95})`; c.fillRect(x - 9 * pp.sc, y0 - 5 * pp.sc, 18 * pp.sc, pp.hh + 10 * pp.sc);
+      c.fillStyle = `rgba(179,195,255,${pp.a * .22})`; c.fillRect(x - 9 * pp.sc, y0 - 5 * pp.sc, 2, pp.hh + 10 * pp.sc);
+      if (pi !== 1) continue;
+      const d = xArc - x; near = Math.min(near, Math.abs(d));
+      if (d >= 0){
+        const heat = Math.exp(-d / 300), col = [96 + 124 * heat, 112 + 120 * heat, 170 + 85 * heat].map(Math.round);
+        c.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${.55 + .45 * heat})`; c.fillRect(x - 5, y0 - 3, 10, pp.hh + 6);
+        c.globalCompositeOperation = 'lighter';
+        const gl = c.createRadialGradient(x, yc, 0, x, yc, pp.hh * .95); gl.addColorStop(0, `rgba(150,176,255,${heat * .42})`); gl.addColorStop(1, 'rgba(107,139,255,0)');
+        c.fillStyle = gl; c.fillRect(x - pp.hh, y0 - pp.hh * .4, pp.hh * 2, pp.hh * 1.8); c.globalCompositeOperation = 'source-over';
+      } else {
+        c.fillStyle = 'rgba(2,6,22,.85)'; c.fillRect(x - 1.5, y0 - 2, 3, pp.hh + 4);
+      }
+    }
+    if (pi === 1) yArc = yc + Math.sin(t * 2.3) * pp.hh * .38 + Math.sin(t * 9.1) * 2;
+  });
+  /* arco e faíscas */
+  const intens = near < 18 ? 1 : .22;
+  if (dt){ emitAcc += (intens > .5 ? 70 : 10) * dt; while (emitAcc >= 1){ hs.emit(xArc, yArc, 1, intens > .5 ? 1 : .6, .4, -1); emitAcc--; } hs.step(dt); }
+  hs.draw(c);
+  const fl = .8 + Math.random() * .2 * intens + .12;
+  c.globalCompositeOperation = 'lighter';
+  const ag = c.createRadialGradient(xArc, yArc, 0, xArc, yArc, 220); ag.addColorStop(0, `rgba(226,236,255,${.6 * fl * (intens > .5 ? 1 : .55)})`); ag.addColorStop(.18, `rgba(107,139,255,${.38 * fl})`); ag.addColorStop(1, 'rgba(42,70,232,0)');
+  c.fillStyle = ag; c.fillRect(xArc - 230, yArc - 230, 460, 460);
+  c.globalCompositeOperation = 'source-over';
+  c.lineCap = 'round'; c.strokeStyle = 'rgba(120,130,160,.95)'; c.lineWidth = 9; c.beginPath(); c.moveTo(xArc + 150, yArc - 250); c.lineTo(xArc + 56, yArc - 82); c.stroke();
+  c.strokeStyle = 'rgba(192,195,200,.95)'; c.lineWidth = 6; c.beginPath(); c.moveTo(xArc + 56, yArc - 82); c.lineTo(xArc + 10, yArc - 10); c.stroke();
+  c.strokeStyle = 'rgba(236,242,255,.98)'; c.lineWidth = 2; c.beginPath(); c.moveTo(xArc + 22, yArc - 30); c.lineTo(xArc + 2, yArc - 3); c.stroke();
+  c.fillStyle = '#fff'; c.beginPath(); c.arc(xArc, yArc, 3 + 2 * fl, 0, 7); c.fill();
+}
+function heroFrame(now){
+  const dt = Math.min(.05, (now - hLast) / 1000 || .016); hLast = now;
+  const p = heroProgress(); drawHero(now / 1000, p, dt); updateTracker(p); hph.style.transform = 'translate3d(0,' + (-p * 90).toFixed(1) + 'px,0)';
+  hraf = heroOn ? requestAnimationFrame(heroFrame) : 0;
+}
+const trk = $$('#trk span'), trkWrap = $('#trk');
+function updateTracker(p){
+  trkWrap.style.setProperty('--hp', p.toFixed(3));
+  const idx = Math.min(3, Math.floor(p * 4));
+  trk.forEach((s, i) => s.classList.toggle('on', i === idx));
+}
+sizeHero(); addEventListener('resize', () => { sizeHero(); if (reduce) drawHero(2, .3, 0); });
+if (reduce) { drawHero(2, .3, 0); updateTracker(.3); }
+else {
+  new IntersectionObserver(([e]) => { heroOn = e.isIntersecting; if (heroOn && !hraf && !window.__hero3d) hraf = requestAnimationFrame(heroFrame); }, {rootMargin:'100px'}).observe(hero);
+  addEventListener('hero3d', () => { heroOn = false; });
+  hraf = requestAnimationFrame(heroFrame);
+}
+
+/* ====== barra de rolagem como cordão de soldadura, e faíscas com o rato ====== */
+const fx = $('#fx'), fc = fx.getContext('2d'), fs = new Sparks(); let fraf = 0, fLast = 0, sparksOn = true;
+try { if (localStorage.getItem('stm-sparks') === 'off') sparksOn = false; } catch {}
+const fxt = $('#fxt'); fxt.setAttribute('aria-pressed', sparksOn);
+fxt.addEventListener('click', () => { sparksOn = !sparksOn; fxt.setAttribute('aria-pressed', sparksOn); try { localStorage.setItem('stm-sparks', sparksOn ? 'on' : 'off'); } catch {} });
+function sizeFx(){ const d = Math.min(devicePixelRatio || 1, 1.5); fx.width = Math.round(innerWidth * d); fx.height = Math.round(innerHeight * d); fc.setTransform(d, 0, 0, d, 0, 0); }
+sizeFx(); addEventListener('resize', sizeFx);
+function fxLoop(now){
+  const dt = Math.min(.05, (now - fLast) / 1000 || .016); fLast = now;
+  fc.clearRect(0, 0, innerWidth, innerHeight); fs.step(dt); fs.draw(fc);
+  fraf = fs.a.length ? requestAnimationFrame(fxLoop) : 0;
+}
+const wakeFx = () => { if (!fraf) { fLast = performance.now(); fraf = requestAnimationFrame(fxLoop); } };
+
+const wrail = $('#wrail'), pct = $('#pct');
+let lastY = scrollY, railTick = 0, railY = 0;
+function updateRail(){
+  railTick = 0;
+  const doc = document.documentElement, max = doc.scrollHeight - innerHeight, p = max > 0 ? clamp(scrollY / max) : 0;
+  const thumb = Math.max(36, innerHeight * innerHeight / doc.scrollHeight);
+  railY = p * (innerHeight - thumb) + thumb / 2;
+  wrail.style.setProperty('--y', railY.toFixed(1) + 'px'); pct.textContent = Math.round(p * 100) + '%';
+  const v = Math.abs(scrollY - lastY); lastY = scrollY;
+  if (sparksOn && !reduce && v > 2){ fs.emit(doc.clientWidth - 5, railY, Math.min(5, 1 + v / 14), .9, -1.3, -.4); wakeFx(); }
+  if (procOn) updateProc();
+}
+addEventListener('scroll', () => { if (!railTick) railTick = requestAnimationFrame(updateRail); }, {passive:true});
+addEventListener('resize', updateRail); updateRail();
+
+if (fine && !reduce){
+  let lx = 0, ly = 0, lt = 0, hot = 0;
+  addEventListener('pointermove', e => {
+    const now = performance.now(), dt = now - lt || 16, dx = e.clientX - lx, dy = e.clientY - ly, sp = Math.hypot(dx, dy) / dt;
+    lx = e.clientX; ly = e.clientY; lt = now;
+    const edge = e.clientX > document.documentElement.clientWidth - 56;
+    wrail.classList.toggle('hot', edge);
+    if (!sparksOn || e.target.closest('input,textarea,select,dialog')) return;
+    if (edge){ if (now - hot > 50){ hot = now; fs.emit(document.documentElement.clientWidth - 5, railY, 2, 1.1, -1.4, -.5); wakeFx(); } return; }
+    if (sp > .9 && e.target.closest('.hero')){ fs.emit(e.clientX, e.clientY, Math.min(3, Math.round(sp / 1.3)), 1, -dx / (Math.hypot(dx, dy) || 1), -dy / (Math.hypot(dx, dy) || 1) - .4); wakeFx(); }
+  }, {passive:true});
+  addEventListener('pointerleave', () => wrail.classList.remove('hot'));
+} else { fxt.hidden = true; }
+
+/* menu sólido e botão fixo */
+let heroAway = false, inContact = false;
+const dockUpdate = () => $('#dock').classList.toggle('on', heroAway && !inContact);
+new IntersectionObserver(([e]) => { heroAway = !e.isIntersecting; nav.classList.toggle('solid', heroAway); dockUpdate(); }, {rootMargin:'-80px 0px 0px 0px'}).observe($('.stick'));
+new IntersectionObserver(([e]) => { inContact = e.isIntersecting; dockUpdate(); }, {threshold:.15}).observe($('#contacto'));
+nav.classList.toggle('solid', scrollY > 40);
+addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 40), {passive:true});
+</script>
+<script type="module">
+/* Fundo 3D do herói (Three.js). Se o WebGL ou a CDN falharem, o fundo 2D continua a funcionar. */
+import * as THREE from 'three';
+
+const cv = document.getElementById('h3d'), hero = document.getElementById('inicio'), stick = hero.querySelector('.stick');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const lowPower = (navigator.hardwareConcurrency || 8) <= 4 || matchMedia('(pointer:coarse)').matches;
+let RoomEnvironment = null;
+try { ({ RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js')); } catch (e) {}
+
+const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: !lowPower, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, lowPower ? 1 : 1.5));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x070f2d);
+scene.fog = new THREE.FogExp2(0x070f2d, .036);
+const camera = new THREE.PerspectiveCamera(42, 1, .1, 260);
+
+let envTex = null;
+if (RoomEnvironment) { const pm = new THREE.PMREMGenerator(renderer); envTex = pm.fromScene(new RoomEnvironment(), .04).texture; }
+
+/* texturas geradas em canvas */
+function radial(stops, size = 128){
+  const c = document.createElement('canvas'); c.width = c.height = size; const g = c.getContext('2d');
+  const gr = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  stops.forEach(([o, col]) => gr.addColorStop(o, col)); g.fillStyle = gr; g.fillRect(0, 0, size, size);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const glowTex = radial([[0, 'rgba(255,255,255,1)'], [.18, 'rgba(190,206,255,.85)'], [.45, 'rgba(107,139,255,.28)'], [1, 'rgba(42,70,232,0)']]);
+const dotTex = radial([[0, 'rgba(255,255,255,1)'], [.4, 'rgba(255,255,255,.7)'], [1, 'rgba(255,255,255,0)']], 64);
+function brushed(){
+  const c = document.createElement('canvas'); c.width = 128; c.height = 512; const g = c.getContext('2d');
+  g.fillStyle = '#808080'; g.fillRect(0, 0, 128, 512);
+  for (let i = 0; i < 1400; i++){ const v = 90 + Math.random() * 90; g.fillStyle = `rgba(${v},${v},${v},${.05 + Math.random() * .12})`; g.fillRect(Math.random() * 128, Math.random() * 512, 1, 30 + Math.random() * 220); }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
+}
+const brush = brushed();
+
+/* luzes */
+scene.add(new THREE.HemisphereLight(0x6f86e0, 0x0a1230, .6));
+const key = new THREE.DirectionalLight(0x9fb2ff, .9); key.position.set(-6, 8, 7); scene.add(key);
+const arcLight = new THREE.PointLight(0xaec3ff, 0, 0, 2); scene.add(arcLight);
+
+/* tubagem principal com juntas */
+const R = 1.1, S = 5.5, NJ = 44, X0 = -12, LEN = S * NJ + 30;
+const steel = new THREE.MeshStandardMaterial({ color: 0x9fb0dc, metalness: .9, roughness: .38, envMap: envTex, envMapIntensity: .55, bumpMap: brush, bumpScale: .35 });
+const darkSteel = new THREE.MeshStandardMaterial({ color: 0x1b2656, metalness: .8, roughness: .45, envMap: envTex, envMapIntensity: .3 });
+const farSteel = new THREE.MeshStandardMaterial({ color: 0x6678ac, metalness: .85, roughness: .45, envMap: envTex, envMapIntensity: .35, bumpMap: brush, bumpScale: .25 });
+brush.repeat.set(6, LEN / 5);
+function pipe(r, x0, len, y, z, mat){
+  const g = new THREE.CylinderGeometry(r, r, len, 48, 1, true); g.rotateZ(Math.PI / 2);
+  const m = new THREE.Mesh(g, mat); m.position.set(x0 + len / 2, y, z); scene.add(m); return m;
+}
+pipe(R, X0, LEN, 0, 0, steel);
+pipe(.55, X0, LEN, 2.4, -3.2, farSteel);
+pipe(.8, X0, LEN, -1.5, -5.4, farSteel);
+const ringGeo = new THREE.TorusGeometry(R + .015, .07, 10, 72); ringGeo.rotateY(Math.PI / 2);
+const beadGeo = new THREE.TorusGeometry(R + .012, .1, 12, 72); beadGeo.rotateY(Math.PI / 2);
+const ring2 = new THREE.TorusGeometry(.56, .05, 8, 40); ring2.rotateY(Math.PI / 2);
+const joints = [];
+for (let k = 0; k < NJ; k++){
+  const x = X0 + 10 + k * S;
+  [-.22, .22].forEach(o => { const m = new THREE.Mesh(ringGeo, darkSteel); m.position.set(x + o, 0, 0); scene.add(m); });
+  const mat = new THREE.MeshStandardMaterial({ color: 0x05081c, emissive: 0x000000, metalness: .6, roughness: .5 });
+  const bead = new THREE.Mesh(beadGeo, mat); bead.position.set(x, 0, 0); scene.add(bead);
+  const gs = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0x8fa8ff, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0 }));
+  gs.position.set(x, 0, R + .3); gs.scale.set(3.6, 3.6, 1); scene.add(gs);
+  joints.push({ x, mat, gs });
+  const sup = new THREE.Mesh(new THREE.BoxGeometry(.5, 1.1, 1.5), darkSteel); sup.position.set(x + 3.5, -1.65, 0); scene.add(sup);
+  if (k % 2 === 0){ const rr = new THREE.Mesh(ring2, darkSteel); rr.position.set(x + 1.5, 2.4, -3.2); scene.add(rr); }
+}
+
+/* estrutura de fundo e chão */
+for (let x = X0; x < X0 + LEN; x += 14){
+  const col = new THREE.Mesh(new THREE.BoxGeometry(.34, 9, .34), darkSteel); col.position.set(x, 2, -7.5); scene.add(col);
+  const beam = new THREE.Mesh(new THREE.BoxGeometry(14, .3, .3), darkSteel); beam.position.set(x + 7, 5.6, -7.5); scene.add(beam);
+}
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(LEN + 40, 90), new THREE.MeshStandardMaterial({ color: 0x060c26, metalness: .4, roughness: .5, envMap: envTex, envMapIntensity: .3 }));
+floor.rotation.x = -Math.PI / 2; floor.position.set(X0 + LEN / 2, -2.2, -10); scene.add(floor);
+const grid = new THREE.GridHelper(LEN + 40, Math.round((LEN + 40) / 2), 0x24378a, 0x131f5a); grid.position.set(X0 + LEN / 2, -2.19, -10);
+grid.material.transparent = true; grid.material.opacity = .45; scene.add(grid);
+
+/* tocha, arco e faíscas */
+const torch = new THREE.Group();
+const metalMat = new THREE.MeshStandardMaterial({ color: 0xaab0bf, metalness: .9, roughness: .3 });
+const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(.1, .07, .7, 16), metalMat); nozzle.position.y = .85;
+const body = new THREE.Mesh(new THREE.CylinderGeometry(.13, .13, 2.6, 16), new THREE.MeshStandardMaterial({ color: 0x1a2250, metalness: .6, roughness: .5 })); body.position.y = 2.5;
+const elect = new THREE.Mesh(new THREE.CylinderGeometry(.014, .014, .9, 8), new THREE.MeshBasicMaterial({ color: 0xe6edff })); elect.position.y = .45;
+torch.add(nozzle, body, elect); scene.add(torch);
+torch.scale.setScalar(1.35);
+const dir = new THREE.Vector3(.8, 1, .75).normalize();
+torch.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+const arcGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xb9c9ff, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+const arcCore = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffffff, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+scene.add(arcGlow, arcCore);
+
+const NS = lowPower ? 220 : 460;
+const sPos = new Float32Array(NS * 3), sCol = new Float32Array(NS * 3), sVel = new Float32Array(NS * 3), sAge = new Float32Array(NS).fill(9), sLife = new Float32Array(NS), sAmb = new Uint8Array(NS);
+for (let i = 0; i < NS; i++) sPos[i * 3 + 1] = -100;
+const sGeo = new THREE.BufferGeometry();
+sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3)); sGeo.setAttribute('color', new THREE.BufferAttribute(sCol, 3));
+const sparks = new THREE.Points(sGeo, new THREE.PointsMaterial({ size: .09, map: dotTex, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+sparks.frustumCulled = false; scene.add(sparks);
+let sHead = 0, acc = 0;
+const arcPos = new THREE.Vector3();
+function emit(phi){
+  const i = sHead; sHead = (sHead + 1) % NS; const o = i * 3, sp = 2 + Math.random() * 5;
+  sPos[o] = arcPos.x; sPos[o + 1] = arcPos.y; sPos[o + 2] = arcPos.z;
+  sVel[o] = (Math.random() - .35) * 6; sVel[o + 1] = Math.sin(phi) * sp + Math.random() * 3; sVel[o + 2] = Math.cos(phi) * sp + Math.random() * 1.5;
+  sAge[i] = 0; sLife[i] = .5 + Math.random() * .9; sAmb[i] = Math.random() < .14 ? 1 : 0;
+}
+
+/* tamanho, rato e visibilidade */
+let W = 1, H = 1;
+function resize(){ const r = stick.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height); renderer.setSize(W, H, false); camera.aspect = W / H; camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(stick); resize();
+const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+hero.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; const r = hero.getBoundingClientRect(); mouse.tx = ((e.clientX - r.left) / r.width - .5) * 2; mouse.ty = ((e.clientY - r.top) / r.height - .5) * 2; }, { passive: true });
+
+/* quadro a quadro */
+const cold = new THREE.Color(0.02, 0.04, 0.12), hot = new THREE.Color(0.86, 0.92, 1), mid = new THREE.Color(.42, .56, 1), tmp = new THREE.Color();
+const look = new THREE.Vector3();
+let idle = 0;
+function update(t, dt, p){
+  idle += dt * .7;
+  const camX = idle + p * 44, narrow = W / H < 1;
+  mouse.x += (mouse.tx - mouse.x) * .06; mouse.y += (mouse.ty - mouse.y) * .06;
+  camera.position.set(camX - mouse.x * .45, .7 + p * .8 - mouse.y * .25, narrow ? 11 : 8.2 - p * .8);
+  look.set(camX + (narrow ? .2 : .9), -.1 + p * .2, 0); camera.lookAt(look);
+  const arcX = camX + (narrow ? .4 : 3.3);
+  const phi = Math.sin(t * 2.1) * .95 + Math.sin(t * 5.3) * .18;
+  arcPos.set(arcX, Math.sin(phi) * (R + .03), Math.cos(phi) * (R + .03));
+  let near = 99;
+  for (const j of joints){
+    if (j.x < camX - 16 || j.x > camX + 18){ j.gs.material.opacity = 0; continue; }
+    const d = arcX - j.x; near = Math.min(near, Math.abs(d));
+    if (d >= -.05){
+      const heat = Math.exp(-Math.max(0, d) / 5.5);
+      tmp.copy(cold).lerp(mid, Math.min(1, heat * 1.6)).lerp(hot, Math.max(0, heat * 1.4 - .4));
+      j.mat.color.setRGB(.35 + .4 * heat, .4 + .4 * heat, .62 + .3 * heat); j.mat.emissive.copy(tmp); j.mat.emissiveIntensity = .25 + heat * 3.4;
+      j.gs.material.opacity = heat * .85;
+    } else { j.mat.color.setHex(0x05081c); j.mat.emissive.setHex(0x000000); j.mat.emissiveIntensity = 0; j.gs.material.opacity = 0; }
+  }
+  const welding = near < .45, fl = .78 + Math.random() * .22;
+  torch.position.copy(arcPos);
+  arcLight.position.set(arcPos.x, arcPos.y, arcPos.z + .5); arcLight.intensity = (welding ? 150 : 55) * fl;
+  arcGlow.position.copy(arcPos); arcGlow.scale.setScalar((welding ? 5.4 : 3.8) * fl);
+  arcCore.position.copy(arcPos); arcCore.scale.setScalar(.95 * fl);
+  if (dt){
+    acc += (welding ? 120 : 16) * dt; while (acc >= 1){ emit(phi); acc--; }
+    for (let i = 0; i < NS; i++){
+      if (sAge[i] >= sLife[i]){ sCol[i * 3] = sCol[i * 3 + 1] = sCol[i * 3 + 2] = 0; continue; }
+      const o = i * 3; sAge[i] += dt; sVel[o + 1] -= 9 * dt;
+      sPos[o] += sVel[o] * dt; sPos[o + 1] += sVel[o + 1] * dt; sPos[o + 2] += sVel[o + 2] * dt;
+      if (sPos[o + 1] < -2.15){ sPos[o + 1] = -2.15; sVel[o + 1] *= -.3; sVel[o] *= .6; sVel[o + 2] *= .6; }
+      const k = Math.max(0, 1 - sAge[i] / sLife[i]);
+      if (sAmb[i]){ sCol[o] = 1 * k; sCol[o + 1] = .62 * k; sCol[o + 2] = .32 * k; } else { sCol[o] = .78 * k; sCol[o + 1] = .85 * k; sCol[o + 2] = 1 * k; }
+    }
+    sGeo.attributes.position.needsUpdate = true; sGeo.attributes.color.needsUpdate = true;
+  }
+}
+
+let running = false, raf = 0, last = 0, shown = false;
+function show(){
+  if (shown) return; shown = true;
+  cv.style.visibility = 'visible';
+  const a = document.getElementById('hcv'), b = document.getElementById('hph'); if (a) a.style.display = 'none'; if (b) b.style.display = 'none';
+  window.__hero3d = true; window.dispatchEvent(new Event('hero3d'));
+}
+function frame(now){
+  const dt = Math.min(.05, (now - last) / 1000 || .016); last = now;
+  const p = window.heroProgress ? window.heroProgress() : 0;
+  update(now / 1000, dt, p); renderer.render(scene, camera);
+  if (window.updateTracker) window.updateTracker(p);
+  show();
+  raf = running ? requestAnimationFrame(frame) : 0;
+}
+if (reduce){ update(2, 0, .3); renderer.render(scene, camera); show(); if (window.updateTracker) window.updateTracker(.3); addEventListener('resize', () => { resize(); renderer.render(scene, camera); }); }
+else {
+  new IntersectionObserver(([e]) => { running = e.isIntersecting && !document.hidden; if (running && !raf) raf = requestAnimationFrame(frame); }, { rootMargin: '100px' }).observe(hero);
+  document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running && !raf) raf = requestAnimationFrame(frame); });
+}
+</script>
+</body>
+</html>
